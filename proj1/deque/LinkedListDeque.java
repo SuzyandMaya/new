@@ -60,7 +60,97 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
     }
 
     @Override
-    boolean isEmpty() {
-        return super.isEmpty();
+    public T get(int i){
+        if(isEmpty() || i < 0)
+            return null;
+
+        Node p = sentinel.next;
+        int count = 0;
+        while(p != sentinel){
+            if(count == i)
+                return p.item;
+
+            p = p.next;
+            count++;
+        }
+        return null;
     }
+
+    public T getRecursive(int index){
+        if (isEmpty() || index < 0){
+            return null;
+        }
+        return getRecursiveHelper(index, sentinel.next);
+    }
+
+    private T getRecursiveHelper(int i, Node p){
+        if(p == sentinel)
+            return null;
+        if(i == 0)
+            return p.item;
+        return getRecursiveHelper(i - 1, p.next);
+    }
+
+    /* Prints the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, print out a new line. */
+    @Override
+    public void printDeque(){
+        Node p = sentinel.next;
+
+        if (p == sentinel){
+            System.out.println("This is empty deque");
+            return;
+        }
+        while(p != sentinel){
+            if (p.next == sentinel){
+                System.out.print(p.item);
+                System.out.println();
+                return;//直接返回，不进行下面的，先if可以不用分类
+            }
+            System.out.print(p.item + " -> ");
+            p = p.next;
+        }
+    }
+
+    public Iterator<T> iterator(){
+        return new LinkedListDequeIterator();
+    }
+
+    private class LinkedListDequeIterator implements Iterator<T>{
+        private int index;
+
+        public LinkedListDequeIterator(){cnt = 0;};
+
+        public boolean hasNext() {
+            return index < size();
+        }
+
+        public T next() {
+            T returnItem = get(index);
+            index += 1;
+            return returnItem;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o)
+            return true;
+        if(!(o instanceof Deque))
+            return false;
+
+        Deque<T> obj = (Deque<T>) o;
+        if(obj.size() != size())
+            return false;
+
+        for(int i = 0; i < obj.size(); i++){
+            T itemFromobj = obj.get(i);
+            T itemFromDeque = this.get(i);
+            if(!itemFromobj.equals(itemFromDeque))
+                return false;
+        }
+        return true;
+    }
+
+
 }
